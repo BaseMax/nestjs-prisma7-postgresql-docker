@@ -104,8 +104,8 @@ jobs:
           echo "=== docker compose logs ==="
           docker compose logs --no-color
 
-          echo "=== docker inspect ==="
-          docker inspect $(docker ps -aq) || true
+          # echo "=== docker inspect ==="
+          # docker inspect $(docker ps -aq) || true
 
       - name: Stop services
         if: always()
