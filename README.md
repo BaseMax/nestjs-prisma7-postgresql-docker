@@ -7,6 +7,7 @@ A professional example project demonstrating how to use **Prisma 7.2.0** (releas
 As the technical manager of an engineering team, I noticed that upgrading to Prisma 7.2.0 was a challenge for many developers due to its breaking changes. To help my team (and the community), I created this repository as a clear, working example: **Upgrading Prisma is easy—like a piece of cake!**
 
 ## Features
+
 - Prisma 7.2.0 integration (with breaking changes handled)
 - NestJS 10.x, TypeScript
 - PostgreSQL database
@@ -42,4 +43,4 @@ docker compose up --build
 
 ## License
 
-MIT © Seyyed Ali Mohammadiyeh
+© 2026, Seyyed Ali Mohammadiyeh - MIT
