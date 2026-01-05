@@ -1,6 +1,11 @@
 {
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "entryFile": "main",
   "compilerOptions": {
-    "deleteOutDir": true,
-    "outDir": "dist"
+    "tsConfigPath": "tsconfig.json",
+    "assets": ["**/*.hbs"],
+    "watchAssets": true,
+    "deleteOutDir": true
   }
 }
