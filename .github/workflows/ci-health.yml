@@ -85,20 +85,20 @@ jobs:
 
           echo "API health check passed."
 
-      - name: Health check database (/health/db)
+      - name: Health check database (/health/database)
         run: |
           set -Eeuo pipefail
           sleep 3
 
-          echo "===== Checking /health/db ====="
+          echo "===== Checking /health/database ====="
           curl -v --connect-timeout 5 --max-time 10 \
             -w "\nHTTP_CODE=%{http_code}\nTOTAL_TIME=%{time_total}\n" \
-            http://localhost:4000/health/db || true
+            http://localhost:4000/health/database || true
 
-          code=$(curl -s -o /tmp/healthdb.out -w "%{http_code}" http://localhost:4000/health/db || echo "000")
+          code=$(curl -s -o /tmp/healthdb.out -w "%{http_code}" http://localhost:4000/health/database || echo "000")
 
-          echo "/health/db HTTP: $code"
-          echo "--- /health/db body ---"
+          echo "/health/database HTTP: $code"
+          echo "--- /health/database body ---"
           cat /tmp/healthdb.out || true
 
           if [ "$code" != "200" ]; then
