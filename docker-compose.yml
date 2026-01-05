@@ -8,13 +8,13 @@ services:
       POSTGRES_PASSWORD: prisma
       POSTGRES_DB: prisma_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   api:
     build: .
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgresql://prisma:prisma@postgres:5432/prisma_db
+      DATABASE_URL: postgresql://prisma:prisma@postgres:5433/prisma_db
     ports:
-      - "3000:3000"
+      - "4000:3000"

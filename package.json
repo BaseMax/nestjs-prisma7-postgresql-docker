@@ -1,7 +1,13 @@
 {
   "name": "nestjs-prisma7-postgresql",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BaseMax/nestjs-prisma7-postgresql-docker"
+  },
+  "license": "MIT",
+  "author": "Seyyed Ali Mohammadiyeh <maxbasecode@gmail.com>",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "type": "commonjs",
   "scripts": {
     "build": "nest build",
