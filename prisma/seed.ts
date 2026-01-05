@@ -1,4 +1,5 @@
 import { PrismaPostgresAdapterConfig, PrismaPostgresAdapter } from '@prisma/adapter-ppg'
+
 import { PrismaClient, Prisma } from './generated/client';
 
 const connectionString = `${process.env.DATABASE_URL}`
