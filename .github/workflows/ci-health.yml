@@ -9,56 +9,94 @@ on:
 jobs:
   health-check:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6.0.1
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.12.0
 
-      - name: Build and start services
-        run: docker compose up --build -d
-
-      - name: Wait for API
+      - name: Docker & system info
         run: |
+          set -x
+          docker version
+          docker compose version
+          uname -a
+          df -h
+
+      - name: Build and start services
+        run: |
+          set -Eeuo pipefail
+          docker compose up --build -d
+          echo "=== Running containers ==="
+          docker ps
+
+      - name: Wait for API port to be open
+        run: |
+          set -Eeuo pipefail
+          echo "Waiting for API on port 4000..."
           for i in {1..30}; do
-            nc -z localhost 4000 && echo "API is up" && exit 0
-            echo "Waiting for API..."
+            if nc -z localhost 4000; then
+              echo "API port is open."
+              exit 0
+            fi
+            echo "[$i/30] API not ready yet..."
             sleep 2
           done
-          echo "API did not start in time" && exit 1
 
-      - name: Health check hello endpoint
+          echo "API port did not open in time."
+          docker ps
+          docker compose logs
+          exit 1
+
+      - name: Health check endpoints (verbose)
         run: |
-          set -e
+          set -Eeuo pipefail
           sleep 5
-          resp1=$(curl -s -w "%{http_code}" http://localhost:4000/health)
-          code1=${resp1: -3}
-          body1=${resp1::-3}
-          echo "/health response: $body1 (HTTP $code1)"
-          if [ "$code1" = "200" ]; then
-            echo "First health checks passed."
-            exit 0
-          else
-            echo "First health check failed!"
+
+          echo "===== /health ====="
+          curl -v --connect-timeout 5 --max-time 10 \
+            -w "\nHTTP_CODE=%{http_code}\nTOTAL_TIME=%{time_total}\n" \
+            http://localhost:4000/health || true
+
+          echo "===== /health/db ====="
+          curl -v --connect-timeout 5 --max-time 10 \
+            -w "\nHTTP_CODE=%{http_code}\nTOTAL_TIME=%{time_total}\n" \
+            http://localhost:4000/health/db || true
+
+          code1=$(curl -s -o /tmp/health.out -w "%{http_code}" http://localhost:4000/health || echo "000")
+          code2=$(curl -s -o /tmp/healthdb.out -w "%{http_code}" http://localhost:4000/health/db || echo "000")
+
+          echo "/health HTTP: $code1"
+          echo "/health/db HTTP: $code2"
+
+          echo "--- /health body ---"
+          cat /tmp/health.out || true
+
+          echo "--- /health/db body ---"
+          cat /tmp/healthdb.out || true
+
+          if [ "$code1" != "200" ] || [ "$code2" != "200" ]; then
+            echo "Health checks failed."
             exit 1
           fi
 
-      - name: Health check database endpoint
+          echo "Both health checks passed."
+
+      - name: Dump Docker diagnostics on failure
+        if: failure()
         run: |
-          set -e
-          sleep 5
-          resp2=$(curl -s -w "%{http_code}" http://localhost:4000/health/db)
-          code2=${resp2: -3}
-          body2=${resp2::-3}
-          echo "/health/db response: $body2 (HTTP $code2)"
-          if [ "$code2" = "200" ]; then
-            echo "Second health checks passed."
-            exit 0
-          else
-            echo "Second health check failed!"
-            exit 1
-          fi
+          echo "=== docker ps ==="
+          docker ps -a
+
+          echo "=== docker compose logs ==="
+          docker compose logs --no-color
+
+          echo "=== docker inspect ==="
+          docker inspect $(docker ps -aq) || true
 
       - name: Stop services
         if: always()
-        run: docker compose down
+        run: |
+          docker compose down -v
