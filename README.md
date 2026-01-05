@@ -39,7 +39,9 @@ docker compose up --build
 ## Prisma 7.2.0 Notes
 
 - Prisma 7+ introduces a new client generation and import style. This repo uses the generated client from `src/generated/prisma`.
-- See [Prisma 7 upgrade guide](https://www.prisma.io/docs/orm/prisma-client/upgrade-guides/upgrade-guide-7) for more details.
+- [Prisma Releases](https://github.com/prisma/prisma/releases/)
+- [Upgrade to Prisma ORM 7](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7#driver-adapters-and-client-instantiation)
+- [PostgreSQL in Prisma](https://www.prisma.io/docs/orm/overview/databases/postgresql)
 
 ## License
 
