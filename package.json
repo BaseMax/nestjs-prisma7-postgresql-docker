@@ -20,11 +20,10 @@
     "@nestjs/common": "^10.3.0",
     "@nestjs/core": "^10.3.0",
     "@nestjs/platform-express": "^10.3.0",
-    "@prisma/client": "^7.0.0",
     "@prisma/adapter-pg": "^7.0.0",
-    "pg": "^8.11.3",
-    "reflect-metadata": "^0.1.14",
-    "rxjs": "^7.8.1"
+    "@prisma/client": "^7.0.0",
+    "@prisma/driver-adapter-utils": "^7.2.0",
+    "reflect-metadata": "^0.1.14"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.0",

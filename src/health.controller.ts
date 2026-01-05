@@ -10,7 +10,7 @@ type HealthResponse = HealthStatus | HealthError;
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}
 
-  @Get()
+  @Get('')
   getHealth(): HealthStatus {
     return { status: 'ok' };
   }
