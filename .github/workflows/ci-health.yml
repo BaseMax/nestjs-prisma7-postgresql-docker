@@ -50,39 +50,51 @@ jobs:
           docker compose logs
           exit 1
 
-      - name: Health check endpoints (verbose)
+      - name: Health check API (/health)
         run: |
           set -Eeuo pipefail
           sleep 5
 
-          echo "===== /health ====="
+          echo "===== Checking /health ====="
           curl -v --connect-timeout 5 --max-time 10 \
             -w "\nHTTP_CODE=%{http_code}\nTOTAL_TIME=%{time_total}\n" \
             http://localhost:4000/health || true
 
-          echo "===== /health/db ====="
+          code=$(curl -s -o /tmp/health.out -w "%{http_code}" http://localhost:4000/health || echo "000")
+
+          echo "/health HTTP: $code"
+          echo "--- /health body ---"
+          cat /tmp/health.out || true
+
+          if [ "$code" != "200" ]; then
+            echo "API health check failed."
+            exit 1
+          fi
+
+          echo "API health check passed."
+
+      - name: Health check database (/health/db)
+        run: |
+          set -Eeuo pipefail
+          sleep 3
+
+          echo "===== Checking /health/db ====="
           curl -v --connect-timeout 5 --max-time 10 \
             -w "\nHTTP_CODE=%{http_code}\nTOTAL_TIME=%{time_total}\n" \
             http://localhost:4000/health/db || true
 
-          code1=$(curl -s -o /tmp/health.out -w "%{http_code}" http://localhost:4000/health || echo "000")
-          code2=$(curl -s -o /tmp/healthdb.out -w "%{http_code}" http://localhost:4000/health/db || echo "000")
+          code=$(curl -s -o /tmp/healthdb.out -w "%{http_code}" http://localhost:4000/health/db || echo "000")
 
-          echo "/health HTTP: $code1"
-          echo "/health/db HTTP: $code2"
-
-          echo "--- /health body ---"
-          cat /tmp/health.out || true
-
+          echo "/health/db HTTP: $code"
           echo "--- /health/db body ---"
           cat /tmp/healthdb.out || true
 
-          if [ "$code1" != "200" ] || [ "$code2" != "200" ]; then
-            echo "Health checks failed."
+          if [ "$code" != "200" ]; then
+            echo "Database health check failed."
             exit 1
           fi
 
-          echo "Both health checks passed."
+          echo "Database health check passed."
 
       - name: Dump Docker diagnostics on failure
         if: failure()
