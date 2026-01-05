@@ -9,7 +9,7 @@ COPY pnpm-lock.yaml ./
 
 RUN pnpm install
 
-COPY prisma ./prisma
+COPY prisma .
 RUN pnpm run prisma:generate
 
 COPY . .
