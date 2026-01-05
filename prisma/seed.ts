@@ -1,8 +1,11 @@
-import { PrismaPg } from '@prisma/adapter-pg';
-
+import { PrismaPostgresAdapterConfig, PrismaPostgresAdapter } from '@prisma/adapter-ppg'
 import { PrismaClient, Prisma } from './generated/client';
 
-const adapter: PrismaPg = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const connectionString = `${process.env.DATABASE_URL}`
+const config: PrismaPostgresAdapterConfig = {
+    connectionString: connectionString,
+};
+const adapter = new PrismaPostgresAdapter(config);
 const options: Prisma.PrismaClientOptions = {
     adapter: adapter,
     errorFormat: 'pretty',

@@ -1,5 +1,5 @@
-import { PrismaPg } from '@prisma/adapter-pg';
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { PrismaPostgresAdapterConfig, PrismaPostgresAdapter } from '@prisma/adapter-ppg'
 
 import { PrismaClient, Prisma } from '../../prisma/generated/client';
 
@@ -8,10 +8,14 @@ export class PrismaService implements OnModuleDestroy {
   public readonly client: PrismaClient;
 
   constructor() {
-    const adapter: PrismaPg = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+    const connectionString = `${process.env.DATABASE_URL}`
+    const config: PrismaPostgresAdapterConfig = {
+        connectionString: connectionString,
+    };
+    const adapter = new PrismaPostgresAdapter(config);
     const options: Prisma.PrismaClientOptions = {
-      adapter: adapter,
-      errorFormat: 'pretty',
+        adapter: adapter,
+        errorFormat: 'pretty',
     };
     this.client = new PrismaClient(options);
   }
